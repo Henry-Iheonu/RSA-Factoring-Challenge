@@ -5,16 +5,16 @@ use std::path::Path;
 
 fn factorize(n: u128) -> (u128, u128) {
     if n % 2 == 0 {
-        return (2, n / 2);
+        return (n / 2, 2); // match example format: bigger * smaller
     }
     let mut i = 3;
     while i * i <= n {
         if n % i == 0 {
-            return (i, n / i);
+            return (n / i, i);
         }
         i += 2;
     }
-    (n, 1) // fallback
+    (n, 1) // fallback if prime (shouldn't happen per spec)
 }
 
 fn main() {
@@ -24,8 +24,7 @@ fn main() {
         std::process::exit(1);
     }
 
-    let file_path = &args[1];
-    if let Ok(lines) = read_lines(file_path) {
+    if let Ok(lines) = read_lines(&args[1]) {
         for line in lines {
             if let Ok(num_str) = line {
                 if let Ok(n) = num_str.trim().parse::<u128>() {
@@ -35,7 +34,8 @@ fn main() {
             }
         }
     } else {
-        eprintln!("Error: could not read file {}", file_path);
+        eprintln!("Error: could not read file {}", &args[1]);
+        std::process::exit(1);
     }
 }
 
