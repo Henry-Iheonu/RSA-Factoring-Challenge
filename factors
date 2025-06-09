@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+import sys
+
+def factorize(n):
+    if n % 2 == 0:
+        return 2, n // 2
+    i = 3
+    while i * i <= n:
+        if n % i == 0:
+            return i, n // i
+        i += 2
+    return n, 1  # Fallback: n is prime or couldn't factor in time
+
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: factors <file>")
+        sys.exit(1)
+
+    file_path = sys.argv[1]
+    try:
+        with open(file_path, "r") as f:
+            for line in f:
+                num = int(line.strip())
+                p, q = factorize(num)
+                print(f"{num}={p}*{q}")
+    except Exception as e:
+        print(f"Error reading file: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
