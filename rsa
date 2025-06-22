@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+import sys
+import math
+
+def is_prime(n):
+    """Efficient prime check using 6k±1 optimization."""
+    if n < 2: return False
+    if n in (2, 3): return True
+    if n % 2 == 0 or n % 3 == 0: return False
+    i = 5
+    w = 2
+    while i * i <= n:
+        if n % i == 0: return False
+        i += w
+        w = 6 - w
+    return True
+
+def rsa_factor(n):
+    """Find two prime factors of n efficiently."""
+    if n % 2 == 0:
+        q = n // 2
+        if is_prime(q):
+            return 2, q
+
+    max_i = int(math.isqrt(n)) + 1
+    i = 3
+    while i <= max_i:
+        if n % i == 0:
+            q = n // i
+            # ✅ Check q first — likely smaller/faster
+            if is_prime(q) and is_prime(i):
+                return i, q
+        i += 2  # Only odd numbers
+    return n, 1  # fallback
+
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: rsa <file>")
+        sys.exit(1)
+
+    try:
+        with open(sys.argv[1], "r") as f:
+            line = f.readline()
+            n = int(line.strip())
+            p, q = rsa_factor(n)
+            print(f"{n}={p}*{q}")
+    except Exception as e:
+        print(f"Error: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
